@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
-class Comment
+class Comment implements \Stringable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,11 +24,20 @@ class Comment
     private ?string $email = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $creatAt = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Conference $conference = null;
+
+    public function __toString(): string
+    {
+        return (string) $this->getEmail();
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -70,14 +79,14 @@ class Comment
         return $this;
     }
 
-    public function getCreatAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->creatAt;
+        return $this->createdAt;
     }
 
-    public function setCreatAt(\DateTimeImmutable $creatAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
-        $this->creatAt = $creatAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -90,6 +99,18 @@ class Comment
     public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getConference(): ?Conference
+    {
+        return $this->conference;
+    }
+
+    public function setConference(?Conference $conference): self
+    {
+        $this->conference = $conference;
 
         return $this;
     }
